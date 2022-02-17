@@ -1,0 +1,12 @@
+{
+    "name": "nzour/symfony-advanced-resolving",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "SymfonyAdvancedResolving\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    }
+}
