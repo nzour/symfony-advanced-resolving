@@ -15,6 +15,9 @@ use function array_keys;
 use function is_a;
 
 /**
+ * @psalm-type AttributeClass = class-string
+ * @psalm-type MetaResolverClass = class-string<MetaResolverInterface>
+ *
  * @internal
  */
 final class LookupMetaResolversCompilerPass implements CompilerPassInterface
@@ -36,7 +39,7 @@ final class LookupMetaResolversCompilerPass implements CompilerPassInterface
     /**
      * @param list<string> $resolvers
      *
-     * @return array<class-string, class-string<MetaResolverInterface>>
+     * @return array<AttributeClass, MetaResolverClass>
      * @throws \Exception
      */
     public static function getResolversMap(ContainerBuilder $container, array $resolvers): array
