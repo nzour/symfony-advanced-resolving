@@ -28,7 +28,7 @@ final class LookupMetaResolversCompilerPass implements CompilerPassInterface
     {
         $resolvers = $container->findTaggedServiceIds(self::META_RESOLVER_TAG);
 
-        $map = self::getResolversMap($container, array_keys($resolvers));
+        $map = self::getResolversMap(array_keys($resolvers));
 
         $container->setDefinition(MetaResolverStorage::class, new Definition(
             class: MetaResolverStorage::class,
@@ -42,7 +42,7 @@ final class LookupMetaResolversCompilerPass implements CompilerPassInterface
      * @return array<AttributeClass, MetaResolverClass>
      * @throws \Exception
      */
-    public static function getResolversMap(ContainerBuilder $container, array $resolvers): array
+    public static function getResolversMap(array $resolvers): array
     {
         $map = [];
         $duplicates = [];
