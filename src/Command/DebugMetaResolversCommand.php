@@ -23,12 +23,7 @@ final class DebugMetaResolversCommand extends Command
 
     public function __construct(private MetaResolverStorage $storage)
     {
-        parent::__construct(self::NAME);
-    }
-
-    protected function configure(): void
-    {
-        $this->setDescription(self::DESCRIPTION);
+        parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
