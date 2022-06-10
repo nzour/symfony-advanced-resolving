@@ -9,6 +9,7 @@ use AdvancedResolving\Core\Exception\CouldNotCreateInstanceFromQueryParamsExcept
 use AdvancedResolving\Core\Exception\NonNullableArgumentWithNoDefaultValueFromQueryParamsException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use function class_exists;
 use function is_string;
@@ -43,7 +44,11 @@ final class FromQueryMetaResolver implements MetaResolverInterface
         $argumentName = $attribute->paramName ?? $argument->getName();
 
         if (self::isFqcn($typehint)) {
-            $value = $this->denormalizer->denormalize($queryParams, $typehint);
+            $value = $this->denormalizer->denormalize(
+                $queryParams,
+                $typehint,
+                context: [AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => $attribute->disableTypeEnforcement],
+            );
         } else {
             /**
              * @var mixed $value
