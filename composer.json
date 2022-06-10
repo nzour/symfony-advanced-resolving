@@ -19,6 +19,7 @@
         "psalm/plugin-symfony": "^3.1",
         "symfony/serializer": "^5.3",
         "jetbrains/phpstorm-stubs": "^2022.1",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "symfony/serializer-pack": "^1.1"
     }
 }
