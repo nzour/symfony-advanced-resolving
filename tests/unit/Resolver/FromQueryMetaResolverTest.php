@@ -21,6 +21,7 @@ use function PHPUnit\Framework\assertEquals;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress MixedAssignment
  */
 class FromQueryMetaResolverTest extends TestCase
 {
@@ -36,7 +37,7 @@ class FromQueryMetaResolverTest extends TestCase
     /**
      * @dataProvider provideDifferentCases
      */
-    public function test(
+    public function testBaseResolverCodeFlow(
         Request          $request,
         ArgumentMetadata $argument,
         FromQuery        $attribute,
@@ -50,14 +51,31 @@ class FromQueryMetaResolverTest extends TestCase
             $this->expectExceptionObject($expected);
         }
 
-        /**
-         * @psalm-suppress MixedAssignment
-         */
         $actual = $this->resolver->resolve($request, $argument, $attribute);
 
         if ($expected instanceof Exception) {
             self::fail("Test case expected exception {$expected}, but no exception was thrown");
         }
+
+        assertEquals($expected, $actual);
+    }
+
+    /**
+     * @dataProvider provideBoolQueryParamCases
+     */
+    public function test_boolQueryParam(mixed $value, bool $expected): void
+    {
+        $actual = $this->resolver->resolve(
+            new Request(['foobar' => $value]),
+            new ArgumentMetadata(
+                name: 'foobar',
+                type: 'bool',
+                isVariadic: false,
+                hasDefaultValue: false,
+                defaultValue: null,
+            ),
+            new FromQuery(),
+        );
 
         assertEquals($expected, $actual);
     }
@@ -231,6 +249,67 @@ class FromQueryMetaResolverTest extends TestCase
             'attribute' => new FromQuery(),
             'denormalizer' => fn(MockObject|DenormalizerInterface $d) => $d->expects(self::never())->method('denormalize'),
             'expect' => $exception,
+        ];
+    }
+
+    /**
+     * @return Generator<string, array{value: mixed, expected: bool}>
+     */
+    public function provideBoolQueryParamCases(): Generator
+    {
+        yield 'Empty string' => [
+            'value' => '',
+            'expected' => false,
+        ];
+
+        yield 'Digit zero' => [
+            'value' => '0',
+            'expected' => false,
+        ];
+
+        yield 'Digit one' => [
+            'value' => '1',
+            'expected' => true,
+        ];
+
+        yield 'Few digits' => [
+            'value' => '100500',
+            'expected' => true,
+        ];
+
+        yield 'Empty array' => [
+            'value' => [],
+            'expected' => false,
+        ];
+
+        yield 'Non-empty array' => [
+            'value' => ['Some value'],
+            'expected' => true,
+        ];
+
+        yield 'Non-empty array with empty string' => [
+            'value' => [''],
+            'expected' => true,
+        ];
+
+        yield 'Value "true" as string' => [
+            'value' => 'true',
+            'expected' => true,
+        ];
+
+        yield 'Value "false" as string' => [
+            'value' => 'false',
+            'expected' => false,
+        ];
+
+        yield 'Value "null" as string' => [
+            'value' => 'null',
+            'expected' => true
+        ];
+
+        yield 'Few words' => [
+            'value' => 'Lorem ipsum',
+            'expected' => true,
         ];
     }
 }
