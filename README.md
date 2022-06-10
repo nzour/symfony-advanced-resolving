@@ -7,7 +7,7 @@
 ### Installation
 
 ```
-composer require <package-name>
+composer require nzour/symfony-advanced-resolving
 ```
 
 **Important**: Make sure bundle `\AdvancedResolving\AdvancedResolvingBundle` become enabled, otherwise enable it in `bundles.php`
