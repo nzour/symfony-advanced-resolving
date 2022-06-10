@@ -12,7 +12,7 @@ return static function (ContainerConfigurator $configurator) {
     $services = $configurator->services()->defaults()->autowire()->autoconfigure();
 
     $services
-        ->load("AdvancedResolving\\Resolver\\", '../../Resolver/')
+        ->load("AdvancedResolving\\Core\\Resolver\\", '../../Resolver/')
         ->tag(LookupMetaResolversCompilerPass::META_RESOLVER_TAG);
 
     $services->set(DebugMetaResolversCommand::class);
