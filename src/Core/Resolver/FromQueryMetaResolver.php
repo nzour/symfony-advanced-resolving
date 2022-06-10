@@ -11,12 +11,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use function class_exists;
+use function is_string;
 
 /**
  * @implements MetaResolverInterface<FromQuery>
  */
 final class FromQueryMetaResolver implements MetaResolverInterface
 {
+    private const BOOL_TYPE_NAME = 'bool';
+
     public function __construct(private DenormalizerInterface $denormalizer)
     {
     }
@@ -60,7 +63,9 @@ final class FromQueryMetaResolver implements MetaResolverInterface
             }
         }
 
-        return $value;
+        return self::BOOL_TYPE_NAME === $argument->getType()
+            ? self::convertToBool($value)
+            : $value;
     }
 
     public static function supportedAttribute(): string
@@ -77,5 +82,14 @@ final class FromQueryMetaResolver implements MetaResolverInterface
     private static function isFqcn(?string $maybeTypehint): bool
     {
         return null !== $maybeTypehint && class_exists($maybeTypehint);
+    }
+
+    private static function convertToBool(mixed $value): bool
+    {
+        if (is_string($value)) {
+            return $value !== 'false' && $value;
+        }
+
+        return (bool) $value;
     }
 }
